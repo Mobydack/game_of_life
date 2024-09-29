@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-const CAMERA_SPEED: f32 = 100.;
+use crate::resources::settings::*;
 
 pub fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle { ..default() });
@@ -8,6 +8,7 @@ pub fn setup(mut commands: Commands) {
 
 pub fn update(
     mut query: Query<&mut Transform, With<Camera2d>>,
+    settings: Res<SettingsResource>,
     time: Res<Time>,
     kb_input: Res<ButtonInput<KeyCode>>,
 ) {
@@ -33,7 +34,7 @@ pub fn update(
         direction.x += 1.;
     }
 
-    let move_delta = direction.normalize_or_zero() * CAMERA_SPEED * time.delta_seconds();
+    let move_delta = direction.normalize_or_zero() * settings.camera.speed * time.delta_seconds();
 
     camera.translation += move_delta.extend(0.);
 }

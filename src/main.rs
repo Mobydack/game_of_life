@@ -11,9 +11,20 @@ fn main() {
     let mut app = App::new();
 
     app.insert_resource(SettingsResource { ..default() });
+
     app.add_plugins(DefaultPlugins);
-    app.add_systems(Startup, systems::camera::setup)
-        .add_systems(Update, systems::camera::update);
+
+    app.add_event::<events::cell::InsertCellEvent>()
+        .add_event::<events::cell::KillCellEvent>();
+
+    app.add_systems(
+        Startup,
+        (systems::camera::setup, systems::cell::init_cells).chain(),
+    )
+    .add_systems(
+        Update,
+        (systems::camera::update, systems::cell::insert_cell_listener),
+    );
 
     app.run();
 }

@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::components::cell_bundle::Position;
 
 #[derive(Event)]
-pub struct InsertCellEvent(Position);
+pub struct InsertCellEvent(pub Position);
 
 #[derive(Event)]
-pub struct KillCellEvent(Entity);
+pub struct KillCellEvent(pub Entity);

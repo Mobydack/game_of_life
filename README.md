@@ -1,4 +1,4 @@
-# Game of life implementation
+# Game of life
 
 Game of life implemetation on Rust and Bevy with infinity grid.
 

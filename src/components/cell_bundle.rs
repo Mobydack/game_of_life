@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::resources::settings::SettingsResource;
 
-#[derive(Component, Clone, Copy)]
+#[derive(Component, Clone, Copy, Eq, PartialEq, Hash)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
@@ -59,20 +59,3 @@ impl CellBundle {
         }
     }
 }
-
-// impl CellBundle {
-//     pub fn new(position: Position) -> Self {
-//         Self {
-//             position,
-//             sprite: SpriteBundle {
-//                 sprite: Sprite {
-//                     color: Color::WHITE,
-//                     custom_size: Some(Vec2::new(CELL_SIZE, CELL_SIZE)),
-//                     ..default()
-//                 },
-//                 transform: Transform::from_translation(Vec3::new(position.x)),
-//                 ..default()
-//             },
-//         }
-//     }
-// }

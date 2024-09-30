@@ -13,3 +13,4 @@ opt-level = 3
 
 [dependencies]
 bevy = "0.14.2"
+iyes_perf_ui = "0.3.0"

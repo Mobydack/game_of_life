@@ -1,26 +1,38 @@
 mod components;
+mod diagnostics;
 mod events;
 mod resources;
 mod storages;
 mod systems;
 
-use bevy::prelude::*;
+use bevy::{
+    diagnostic::{Diagnostic, FrameTimeDiagnosticsPlugin, RegisterDiagnostic},
+    prelude::*,
+};
+use iyes_perf_ui::prelude::*;
 use resources::settings::SettingsResource;
 
 fn main() {
     let mut app = App::new();
 
-    app.insert_resource(SettingsResource { ..default() })
-        .insert_resource(Time::<Fixed>::from_seconds(0.2));
+    app.register_diagnostic(Diagnostic::new(diagnostics::CELLS_COUNT).with_suffix("game"));
 
-    app.add_plugins(DefaultPlugins);
+    app.insert_resource(SettingsResource { ..default() })
+        .insert_resource(Time::<Fixed>::from_seconds(0.1));
+
+    app.add_plugins(DefaultPlugins)
+        .add_plugins(FrameTimeDiagnosticsPlugin)
+        .add_plugins(PerfUiPlugin);
 
     app.add_event::<events::cell::InsertCellEvent>()
         .add_event::<events::cell::KillCellEvent>();
 
     app.add_systems(
         Startup,
-        (systems::camera::setup, systems::cell::init_cells).chain(),
+        (
+            (systems::camera::setup, systems::cell::init_cells).chain(),
+            systems::debug::setup_deubg,
+        ),
     )
     .add_systems(
         Update,
@@ -28,9 +40,12 @@ fn main() {
             systems::camera::update,
             systems::cell::insert_cell_listener,
             systems::cell::kill_cell_listener,
+            systems::debug::update_cells_diagnostic,
         ),
     )
     .add_systems(FixedUpdate, systems::cell::next_generation);
+
+    app.add_perf_ui_simple_entry::<components::debug_entries::PerfUiCellsCount>();
 
     app.run();
 }

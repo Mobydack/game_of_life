@@ -2,6 +2,7 @@ mod components;
 mod diagnostics;
 mod events;
 mod resources;
+mod states;
 mod storages;
 mod systems;
 
@@ -14,15 +15,16 @@ use resources::settings::SettingsResource;
 
 fn main() {
     let mut app = App::new();
-
-    app.register_diagnostic(Diagnostic::new(diagnostics::CELLS_COUNT).with_suffix("game"));
-
-    app.insert_resource(SettingsResource { ..default() })
-        .insert_resource(Time::<Fixed>::from_seconds(0.1));
-
     app.add_plugins(DefaultPlugins)
         .add_plugins(FrameTimeDiagnosticsPlugin)
         .add_plugins(PerfUiPlugin);
+
+    app.register_diagnostic(Diagnostic::new(diagnostics::CELLS_COUNT).with_suffix("game"));
+
+    app.init_state::<states::GamePauseStates>();
+
+    app.insert_resource(SettingsResource { ..default() })
+        .insert_resource(Time::<Fixed>::from_seconds(0.1));
 
     app.add_event::<events::cell::InsertCellEvent>()
         .add_event::<events::cell::KillCellEvent>();
@@ -41,9 +43,13 @@ fn main() {
             systems::cell::insert_cell_listener,
             systems::cell::kill_cell_listener,
             systems::debug::update_cells_diagnostic,
+            systems::game::game_states_controller,
         ),
     )
-    .add_systems(FixedUpdate, systems::cell::next_generation);
+    .add_systems(
+        FixedUpdate,
+        (systems::cell::next_generation).run_if(in_state(states::GamePauseStates::Running)),
+    );
 
     app.add_perf_ui_simple_entry::<components::debug_entries::PerfUiCellsCount>();
 

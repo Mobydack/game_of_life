@@ -18,7 +18,7 @@ pub struct SettingsResource {
 impl Default for SettingsResource {
     fn default() -> Self {
         Self {
-            camera: CameraSettings { speed: 100. },
+            camera: CameraSettings { speed: 400. },
             cell: CellSettings {
                 size: 10.,
                 padding: 2.,

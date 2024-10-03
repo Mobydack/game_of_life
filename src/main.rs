@@ -1,6 +1,7 @@
 mod components;
 mod diagnostics;
 mod events;
+mod plugins;
 mod resources;
 mod states;
 mod storages;
@@ -17,7 +18,8 @@ fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
         .add_plugins(FrameTimeDiagnosticsPlugin)
-        .add_plugins(PerfUiPlugin);
+        .add_plugins(PerfUiPlugin)
+        .add_plugins(plugins::camera::CameraPlugin);
 
     app.register_diagnostic(Diagnostic::new(diagnostics::CELLS_COUNT).with_suffix("game"));
 
@@ -39,7 +41,6 @@ fn main() {
     .add_systems(
         Update,
         (
-            systems::camera::update,
             systems::cell::insert_cell_listener,
             systems::cell::kill_cell_listener,
             systems::debug::update_cells_diagnostic,

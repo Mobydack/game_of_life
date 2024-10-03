@@ -8,7 +8,7 @@ pub fn movement(
             &GameCameraSettingsMovement,
             &GameCameraSettingsKeyBindings,
         ),
-        (With<ActiveGameCamera>),
+        With<ActiveGameCamera>,
     >,
     button_input: Res<ButtonInput<KeyCode>>,
     time: Res<Time<Real>>,
